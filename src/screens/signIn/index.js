@@ -25,20 +25,19 @@ const SignIn = (props) => {
     horizontal: "center",
   });
   const handleClose = () => {
-    setState({ ...state, error: false});
+    setState({ ...state, error: false });
   };
-  const handleCloseSuc=()=>{
-   setState({ ...state, success: false});
-   navigate("/list");
-
- }
+  const handleCloseSuc = () => {
+    setState({ ...state, success: false });
+    navigate("/list");
+  };
   const onChange = (e) => {
     setSignData({ ...signData, [e.target.name]: e.target.value });
   };
   const { vertical, horizontal, success, error } = state;
   const handleClick = (newState) => () => {
     if (signData.email === "" && signData.password === "") {
-      setState({error: true, ...newState });
+      setState({ error: true, ...newState });
     } else {
       setState({ success: true, ...newState });
     }
@@ -54,27 +53,27 @@ const SignIn = (props) => {
       setError2(true);
     } else if (signData.email && signData.password === "") {
       if (signData.email && regexEmail.test(signData.email) === true) {
-        console.log("Enter your pasword");
+       alert("Enter your pasword");
         setError1(false);
         setError2(true);
       } else {
-        console.log("Pleace be fill abc@gmail.com format");
+        alert("Pleace be fill abc@gmail.com format");
         setError1(true);
       }
     } else if (signData.email === "" && signData.password) {
       if (signData.password && regexPsw.test(signData.password) === true) {
-        console.log("Enter Email id");
+      alert("Enter Email id");
         setError1(false);
         setError2(false);
       } else {
-        console.log("Pleace be Uper, Lower, symbls,numbers set your password");
+        alert("Pleace be Uper, Lower, symbls,numbers set your password");
         setError1(true);
       }
     } else if (
       regexEmail.test(signData.email) === false &&
       regexPsw.test(signData.password) === false
     ) {
-      console.log("Your Email Id and Password Incorrectly");
+      alert("Your Email Id and Password Incorrectly");
       setError1(true);
       setError2(true);
     } else if (
@@ -205,12 +204,12 @@ const SignIn = (props) => {
           severity="success"
           variant="filled"
           sx={{ width: "100%" }}
-          >
-         Your Sign In success..!!
+        >
+          Your Sign In success..!!
         </Alert>
       </Snackbar>
 
-       {/* Pleace Fill Your Password... and Password..!!*/}
+      {/* Pleace Fill Your Password... and Password..!!*/}
       <Snackbar
         open={error}
         autoHideDuration={6000}
@@ -226,8 +225,6 @@ const SignIn = (props) => {
           Pleace Fill Your Password... and Password..!!
         </Alert>
       </Snackbar>
-      
-      
     </>
   );
 };
