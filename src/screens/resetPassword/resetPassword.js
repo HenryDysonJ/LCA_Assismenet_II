@@ -112,7 +112,7 @@ const ResetPassword = () => {
             container
             direction="row"
             justifyContent="space-between"
-            mt={2}
+           
           >
             <Grid item xs={3}>
               <Link href="/">&#60; Back to Sign In</Link>
