@@ -51,6 +51,7 @@ const LcaList = () => {
   };
 
   useEffect(() => {
+   
     let listData = localStorage.getItem("showList");
     let mapData = JSON.parse(listData);
     setDatas(mapData);
@@ -58,12 +59,11 @@ const LcaList = () => {
   }, []);
   const handleDelete = (id) => {
     let del = JSON.parse(localStorage.getItem("showList"));
-    const deleteds = del.filter((item) => item.id != id);
+    let  deleteds = del.filter((items)=>items.formValue.id != id);
     localStorage.setItem("showList", JSON.stringify(deleteds));
     setDatas(deleteds);
   };
   const handleEdit = (item, indexVal) => {
-    console.log(indexVal);
     navigate("/info", {
       state: { item: item, index: indexVal },
     });
@@ -165,7 +165,7 @@ const LcaList = () => {
                         <StyledTableCell align="right">
                           <Button
                             variant="outlined"
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => handleDelete(item?.formValue?.id)}
                           >
                             <DeleteForeverRoundedIcon />
                           </Button>

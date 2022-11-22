@@ -89,7 +89,6 @@ const LocalInfo = () => {
     navigate("/list");
   };
   const handleSubmit = () => {
-    console.log(formValue, "valueEdit");
     let showList = [];
     const show = {
       formValue,
