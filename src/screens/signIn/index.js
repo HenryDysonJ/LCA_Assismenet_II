@@ -20,29 +20,23 @@ const SignIn = (props) => {
 
   const [state, setState] = useState({
     error: false,
-    success: false,
     vertical: "top",
     horizontal: "center",
   });
   const handleClose = () => {
     setState({ ...state, error: false });
   };
-  const handleCloseSuc = () => {
-    setState({ ...state, success: false });
-    navigate("/list");
-  };
   const onChange = (e) => {
     setSignData({ ...signData, [e.target.name]: e.target.value });
   };
-  const { vertical, horizontal, success, error } = state;
+  const { vertical, horizontal, error } = state;
   const handleClick = (newState) => () => {
     if (signData.email === "" && signData.password === "") {
       setState({ error: true, ...newState });
-    } else {
-      setState({ success: true, ...newState });
-    }
+    } 
   };
   const handleSubmit = () => {
+
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     let regexPsw = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{6,14}$/;
@@ -53,7 +47,7 @@ const SignIn = (props) => {
       setError2(true);
     } else if (signData.email && signData.password === "") {
       if (signData.email && regexEmail.test(signData.email) === true) {
-       alert("Enter your pasword");
+        alert("Pleace be Uper, Lower, symbls,numbers set your password");
         setError1(false);
         setError2(true);
       } else {
@@ -83,6 +77,7 @@ const SignIn = (props) => {
       console.log("success your efort dyson");
       setError1(false);
       setError2(false);
+      navigate('/list')
     }
   };
 
@@ -192,22 +187,7 @@ const SignIn = (props) => {
         </Grid>
       </Paper>
 
-      {/* Your Sign In success..!! */}
-      <Snackbar
-        open={success}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical, horizontal }}
-      >
-        <Alert
-          onClose={handleCloseSuc}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          Your Sign In success..!!
-        </Alert>
-      </Snackbar>
+
 
       {/* Pleace Fill Your Password... and Password..!!*/}
       <Snackbar

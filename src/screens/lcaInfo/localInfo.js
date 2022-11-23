@@ -11,19 +11,39 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import Autocomplete from "@mui/material/Autocomplete";
+import dayjs from "dayjs";
 import TextField from "@mui/material/TextField";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 import Popover from "@mui/material/Popover";
 import { useNavigate, useLocation } from "react-router-dom";
 import nextId from "react-id-generator";
 import { Alert, Snackbar } from "@mui/material";
+import moment from "moment/moment";
 
 const LocalInfo = () => {
   const [value, setValue] = useState("1");
   const [anchorEl, setAnchorEl] = useState(null);
-  const [error, setError] = useState(false);
+
+  const [error, setError] = useState({
+    clasfition: !null,
+    workLocation: !null,
+    jobRole: !null,
+    workLocation: !null,
+    EName: !null,
+    ENumber: !null,
+    Email: !null,
+    ECode: !null,
+    destnation: !null,
+    visaType: !null,
+    AsstReqNo: !null,
+    visaReq: !null,
+    workPerNo: !null,
+    StartDate: !null,
+    EndDate: !null,
+  });
   const [state, setState] = useState({
     openss: false,
     vertical: "top",
@@ -53,6 +73,7 @@ const LocalInfo = () => {
   const id = open ? "simple-popover" : undefined;
   const { vertical, horizontal, openss } = state;
   let editData = useLocation();
+
   useEffect(() => {
     if (editData) {
       setFormValue(editData?.state?.item?.formValue);
@@ -62,9 +83,11 @@ const LocalInfo = () => {
   const ComOnchangeVal = (e, val, type) => {
     setFormValue({
       ...formValue,
-      [type]: val,
+      [type]: val
     });
+    setError({ ...formValue, [type]: val });
   };
+  console.log(formValue, "dateChech");
   const handleClicksnak = (newState) => () => {
     setState({ openss: true, ...newState });
   };
@@ -94,24 +117,27 @@ const LocalInfo = () => {
       formValue,
     };
 
-    if (formValue.id) {
+    if (!formValue) {
+      setError(undefined);
+    } else if (formValue.id) {
       // edit Exist new list
       let editId = formValue.id;
       let list = JSON.parse(localStorage.getItem("showList") || "[]");
-      list[editData.state.index] = show;
+      list[list.findIndex((val) => val.formValue.id === editId)] = show;
       showList = list;
-    } else {
+      localStorage.setItem("showList", JSON.stringify(showList));
+      navigate("/list");
+    } else if (formValue) {
       //  create new list
       formValue["id"] = unicId;
       showList.push(show);
       showList = showList.concat(
         JSON.parse(localStorage.getItem("showList") || "[]")
       );
+      localStorage.setItem("showList", JSON.stringify(showList));
+      navigate("/list");
     }
-
-    localStorage.setItem("showList", JSON.stringify(showList));
   };
-
   return (
     <div>
       <AppBar position="static" color="secondary">
@@ -126,6 +152,7 @@ const LocalInfo = () => {
           </Tabs>
         </Toolbar>
       </AppBar>
+
       <FormControl>
         <Grid container rowGap={2} columnSpacing={0} padding={6} mt={0}>
           <Grid
@@ -156,7 +183,6 @@ const LocalInfo = () => {
                 </Typography>
 
                 <Autocomplete
-                  error={error}
                   fullWidth
                   size="small"
                   id="combo-box-demo"
@@ -164,7 +190,11 @@ const LocalInfo = () => {
                   onChange={(e, val) => ComOnchangeVal(e, val, "clasfition")}
                   value={formValue?.clasfition}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select" />
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.clasfition ? false : true}
+                    />
                   )}
                 />
               </Grid>
@@ -192,7 +222,6 @@ const LocalInfo = () => {
                 </Typography>
                 <Autocomplete
                   disablePortal
-                  error={error}
                   fullWidth
                   size="small"
                   id="combo-box-demo"
@@ -200,7 +229,11 @@ const LocalInfo = () => {
                   onChange={(e, val) => ComOnchangeVal(e, val, "jobRole")}
                   value={formValue?.jobRole}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select" />
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.jobRole ? false : true}
+                    />
                   )}
                 />
               </Grid>
@@ -230,7 +263,7 @@ const LocalInfo = () => {
                 <Autocomplete
                   disablePortal
                   fullWidth
-                  error={error}
+                  error
                   name="workLocation"
                   size="small"
                   id="combo-box-demo"
@@ -238,7 +271,11 @@ const LocalInfo = () => {
                   value={formValue?.workLocation}
                   onChange={(e, val) => ComOnchangeVal(e, val, "workLocation")}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select" />
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.workLocation ? false : true}
+                    />
                   )}
                 />
               </Grid>
@@ -264,7 +301,7 @@ const LocalInfo = () => {
                 </Typography>
                 <TextField
                   fullWidth
-                  error={error}
+                  error={error?.ENumber ? false : true}
                   size="small"
                   type="text"
                   value={formValue?.ENumber}
@@ -293,7 +330,7 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <TextField
-                  error={error}
+                  error={error?.EName ? false : true}
                   size="small"
                   type="text"
                   fullwidth
@@ -325,7 +362,7 @@ const LocalInfo = () => {
                 <TextField
                   fullWidth
                   id="fullWidth"
-                  error={error}
+                  error={error?.ECode ? false : true}
                   size="small"
                   fullwidth
                   value={formValue?.ECode}
@@ -356,7 +393,7 @@ const LocalInfo = () => {
                 <TextField
                   fullWidth
                   id="fullWidth"
-                  error={error}
+                  error={error?.Email ? false : true}
                   size="small"
                   fullwidth
                   value={formValue?.Email}
@@ -392,7 +429,6 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <Autocomplete
-                  error={error}
                   disablePortal
                   fullWidth
                   size="small"
@@ -401,7 +437,11 @@ const LocalInfo = () => {
                   value={formValue?.destnation}
                   onChange={(e, val) => ComOnchangeVal(e, val, "destnation")}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select" />
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.destnation ? false : true}
+                    />
                   )}
                 />
               </Grid>
@@ -421,7 +461,6 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <Autocomplete
-                  error={error}
                   disablePortal
                   fullWidth
                   size="small"
@@ -430,7 +469,11 @@ const LocalInfo = () => {
                   value={formValue?.visaType}
                   onChange={(e, val) => ComOnchangeVal(e, val, "visaType")}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select" />
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.visaType ? false : true}
+                    />
                   )}
                 />
               </Grid>
@@ -447,7 +490,7 @@ const LocalInfo = () => {
                 </Typography>
                 <TextField
                   fullWidth
-                  error={error}
+                  error={error?.AsstReqNo ? false : true}
                   size="small"
                   fullwidth
                   value={formValue?.AsstReqNo}
@@ -472,7 +515,7 @@ const LocalInfo = () => {
                 </Typography>
                 <TextField
                   fullWidth
-                  error={error}
+                  error={error?.workPerNo ? false : true}
                   size="small"
                   type="text"
                   value={formValue?.workPerNo}
@@ -508,12 +551,25 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DesktopDatePicker
+                  <DatePicker
                     disablePast
                     inputFormat="DD/MM/YYYY"
-                    onChange={(e, val) => ComOnchangeVal(e, val, "StartDate")}
+                    value={formValue?.StartDate}
+                    minDate={formValue?.StartDate}
+                    // minDate={dayjs("2022/11/10")}
+                    onChange={(newValue) => {
+                      setFormValue({
+                        ...formValue,
+                        StartDate: newValue,
+                      });
+                    }}
                     renderInput={(params) => (
-                      <TextField {...params} size="small" fullWidth />
+                      <TextField
+                        {...params}
+                        size="small"
+                        fullWidth
+                        error={error?.StartDate ? false : true}
+                      />
                     )}
                   />
                 </LocalizationProvider>
@@ -534,13 +590,24 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DesktopDatePicker
-                    error={error}
-                    disableFuture
-                    inputFormat="DD/MM/YYYY"
-                    onChange={(e, val) => ComOnchangeVal(e, val, "EndDate")}
+                  <DatePicker
+                  disablePast
+                    value={formValue?.EndDate}
+                    maxDate={formValue?.EndDate}
+                    // maxDate={dayjs("2022/12/20")}
+                    onChange={(newValue) => {
+                      setFormValue({
+                        ...formValue,
+                        EndDate: newValue,
+                      });
+                    }}
                     renderInput={(params) => (
-                      <TextField {...params} size="small" fullWidth />
+                      <TextField
+                        {...params}
+                        size="small"
+                        fullWidth
+                        error={error?.EndDate ? false : true}
+                      />
                     )}
                   />
                 </LocalizationProvider>
@@ -561,7 +628,6 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <Autocomplete
-                  error={error}
                   disablePortal
                   fullWidth
                   size="small"
@@ -570,7 +636,11 @@ const LocalInfo = () => {
                   id="combo-box-demo"
                   options={visaReq}
                   renderInput={(params) => (
-                    <TextField {...params} label="Select" />
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.visaReq ? false : true}
+                    />
                   )}
                 />
               </Grid>
@@ -601,10 +671,10 @@ const LocalInfo = () => {
           <Grid
             item
             sx={2}
-            onClick={handleClicksnak({
-              vertical: "top",
-              horizontal: "right",
-            })}
+            // onClick={handleClicksnak({
+            //   vertical: "top",
+            //   horizontal: "right",
+            // })}
           >
             <Button variant="contained" type="submit" onClick={handleSubmit}>
               {" "}
