@@ -5,6 +5,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
   const [open, setOpen] = React.useState(false);
@@ -12,6 +13,7 @@ const ResetPassword = () => {
   const [email, setEmail] = useState({
     email: "",
   });
+  let navigate =useNavigate();
   const onChangeEmail = (e) => {
     setEmail({ ...email, [e.target.name]: e.target.value });
   };
@@ -34,6 +36,8 @@ const ResetPassword = () => {
     } else {
       console.log("Pleace be fill abc@gmail.com format");
       setError(true);
+      setOpen(true);
+      navigate('/')
     }
   };
 
@@ -96,14 +100,15 @@ const ResetPassword = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment
-                    position="start"
-                    sx={{ backgroundColor: " #D3DADD", padding: 4 }}
+                  position="start"
+                  sx={{ backgroundColor: " #D3DADD", padding:"22px 18px", }}
+                 
                   >
                     <DraftsIcon />
                   </InputAdornment>
                 ),
               }}
-              onChangeFun={onChangeEmail}
+              onChangeFun={(e)=>onChangeEmail(e)}
             />
           </Grid>
 
@@ -112,12 +117,13 @@ const ResetPassword = () => {
             container
             direction="row"
             justifyContent="space-between"
+            rowGap={2}
            
           >
-            <Grid item xs={3}>
+            <Grid item xs={3} ml={2}>
               <Link href="/">&#60; Back to Sign In</Link>
             </Grid>
-            <Grid item xs={3} align="right">
+            <Grid item xs={3} align="right" mr={5}>
               <Button variant="contained" onClick={handleClick}>
                 SEND CODE
               </Button>

@@ -16,7 +16,6 @@ import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
 import Popover from "@mui/material/Popover";
 import { useNavigate, useLocation } from "react-router-dom";
 import nextId from "react-id-generator";
@@ -83,11 +82,10 @@ const LocalInfo = () => {
   const ComOnchangeVal = (e, val, type) => {
     setFormValue({
       ...formValue,
-      [type]: val
+      [type]: val,
     });
     setError({ ...formValue, [type]: val });
   };
-  console.log(formValue, "dateChech");
   const handleClicksnak = (newState) => () => {
     setState({ openss: true, ...newState });
   };
@@ -129,15 +127,21 @@ const LocalInfo = () => {
       navigate("/list");
     } else if (formValue) {
       //  create new list
-      formValue["id"] = unicId;
-      showList.push(show);
-      showList = showList.concat(
-        JSON.parse(localStorage.getItem("showList") || "[]")
-      );
-      localStorage.setItem("showList", JSON.stringify(showList));
-      navigate("/list");
+      let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (formValue.Email && regexEmail.test(formValue.Email) === true) {
+        formValue["id"] = unicId;
+        showList.push(show);
+        showList = showList.concat(
+          JSON.parse(localStorage.getItem("showList") || "[]")
+        );
+        localStorage.setItem("showList", JSON.stringify(showList));
+        navigate("/list");
+      } else {
+        setError(true);
+      }
     }
   };
+  console.log(formValue, "finish");
   return (
     <div>
       <AppBar position="static" color="secondary">
@@ -152,9 +156,8 @@ const LocalInfo = () => {
           </Tabs>
         </Toolbar>
       </AppBar>
-
       <FormControl>
-        <Grid container rowGap={2} columnSpacing={0} padding={6} mt={0}>
+        <Grid container rowGap={2} columnSpacing={0} padding={3} mt={0}>
           <Grid
             container
             columnSpacing={{ xs: 3, md: 2, lg: 2 }}
@@ -163,8 +166,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="space-between">
                 <Typography
-                  variant="h6"
-                  component={"h6"}
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
+                  component="h6"
                   style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
@@ -179,6 +183,7 @@ const LocalInfo = () => {
                   <InfoOutlinedIcon
                     onClick={handleClick}
                     aria-describedby={id}
+                    sx={{ fontSize: "20px" }}
                   />
                 </Typography>
 
@@ -202,9 +207,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="space-between">
                 <Typography
-                  variant="h6"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   color="secondary.contrastText"
                 >
                   ROLE
@@ -218,6 +223,7 @@ const LocalInfo = () => {
                   <InfoOutlinedIcon
                     onClick={handleClick}
                     aria-describedby={id}
+                    sx={{ fontSize: "20px" }}
                   />
                 </Typography>
                 <Autocomplete
@@ -241,9 +247,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="space-between">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   NUMBER OF WORK LOCATION
@@ -258,6 +264,7 @@ const LocalInfo = () => {
                   <InfoOutlinedIcon
                     onClick={handleClick}
                     aria-describedby={id}
+                    sx={{ fontSize: "20px" }}
                   />
                 </Typography>
                 <Autocomplete
@@ -281,9 +288,20 @@ const LocalInfo = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Typography variant="subtitle1" component="h6">
-            EMPOYEE PORSONAL INFORMATION{" "}
-          </Typography>
+          <Grid
+            container
+            p={1}
+            sx={{ borderBottom: "1px solid lightGray", sm: 12, sx: 12 }}
+          >
+            <Typography
+              variant="subtitle-1"
+              component="h6"
+              sx={{ fontSize: 14 }}
+            >
+              EMPOYEE PORSONAL INFORMATION{" "}
+            </Typography>
+          </Grid>
+
           <Grid
             container
             columnSpacing={{ xs: 3, md: 2, lg: 2 }}
@@ -292,14 +310,19 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   EMPLOYEE NUMBER
                 </Typography>
+                <Typography color="secondary.dark" variant="">
+                  {" "}
+                  *
+                </Typography>
                 <TextField
+                  sx={{ mt: 1 }}
                   fullWidth
                   error={error?.ENumber ? false : true}
                   size="small"
@@ -318,9 +341,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   EMPLOYEE NAME
@@ -330,6 +353,7 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <TextField
+                  sx={{ mt: 1 }}
                   error={error?.EName ? false : true}
                   size="small"
                   type="text"
@@ -348,9 +372,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   EMPLOYEE CODE
@@ -360,6 +384,7 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <TextField
+                  sx={{ mt: 1 }}
                   fullWidth
                   id="fullWidth"
                   error={error?.ECode ? false : true}
@@ -379,9 +404,9 @@ const LocalInfo = () => {
               {/* Email id */}
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   OFFICIAL EMAIL ID
@@ -391,6 +416,7 @@ const LocalInfo = () => {
                   *
                 </Typography>
                 <TextField
+                  sx={{ mt: 1 }}
                   fullWidth
                   id="fullWidth"
                   error={error?.Email ? false : true}
@@ -399,6 +425,7 @@ const LocalInfo = () => {
                   value={formValue?.Email}
                   InputProps={{ name: "Email" }}
                   placeholder="Enter the Email "
+                  helperText={"Use abc@gmail.com format"}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "Email")
                   }
@@ -406,9 +433,20 @@ const LocalInfo = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Typography variant="subtitle1" component="h6">
-            ASSIGNMENT INFORMATION{" "}
-          </Typography>
+          <Grid
+            container
+            p={1}
+            sx={{ borderBottom: "1px solid lightGray", sm: 12, sx: 12 }}
+            mt={0}
+          >
+            <Typography
+              variant="subtitle-1"
+              component="h6"
+              sx={{ fontSize: 14 }}
+            >
+              ASSIGNMENT INFORMATION{" "}
+            </Typography>
+          </Grid>
           <Grid
             container
             columnSpacing={{ xs: 3, md: 2, lg: 2 }}
@@ -417,9 +455,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   DESTINATION COUNTRY
@@ -438,8 +476,9 @@ const LocalInfo = () => {
                   onChange={(e, val) => ComOnchangeVal(e, val, "destnation")}
                   renderInput={(params) => (
                     <TextField
+                      sx={{ mt: 1 }}
                       {...params}
-                      label="Select"
+                      placeholder=" Select Destination"
                       error={error?.destnation ? false : true}
                     />
                   )}
@@ -449,9 +488,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   VISA TYPE
@@ -470,8 +509,9 @@ const LocalInfo = () => {
                   onChange={(e, val) => ComOnchangeVal(e, val, "visaType")}
                   renderInput={(params) => (
                     <TextField
+                      sx={{ mt: 1 }}
                       {...params}
-                      label="Select"
+                      placeholder="Select Visa"
                       error={error?.visaType ? false : true}
                     />
                   )}
@@ -481,14 +521,19 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   ASSIGNMENT REQUEST NO
                 </Typography>
+                <Typography color="secondary.dark" variant="subtitle">
+                  {" "}
+                  *
+                </Typography>
                 <TextField
+                  sx={{ mt: 1 }}
                   fullWidth
                   error={error?.AsstReqNo ? false : true}
                   size="small"
@@ -506,14 +551,19 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   WORK PERMIT REQUEST NO
                 </Typography>
+                <Typography color="secondary.dark" variant="subtitle">
+                  {" "}
+                  *
+                </Typography>
                 <TextField
+                  sx={{ mt: 1 }}
                   fullWidth
                   error={error?.workPerNo ? false : true}
                   size="small"
@@ -539,9 +589,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   WORK PERMIT START DATE
@@ -553,18 +603,25 @@ const LocalInfo = () => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     disablePast
-                    inputFormat="DD/MM/YYYY"
+                    inputFormat="DD-MM-YYYY"
                     value={formValue?.StartDate}
-                    minDate={formValue?.StartDate}
-                    // minDate={dayjs("2022/11/10")}
                     onChange={(newValue) => {
+                      let dateStart = newValue.$d;
+                      let disableDate = moment(dateStart).add(1, "days");
                       setFormValue({
                         ...formValue,
                         StartDate: newValue,
+                        minend: moment(disableDate),
+                        EndDate: null,
                       });
+                      setError( {...formValue,
+                        StartDate: newValue,
+                        minend: moment(disableDate),
+                        EndDate: null,})
                     }}
                     renderInput={(params) => (
                       <TextField
+                        sx={{ mt: 1 }}
                         {...params}
                         size="small"
                         fullWidth
@@ -578,9 +635,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   WORK PERMIT END DATE
@@ -591,18 +648,17 @@ const LocalInfo = () => {
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                  disablePast
+                    disablePast
                     value={formValue?.EndDate}
-                    maxDate={formValue?.EndDate}
-                    // maxDate={dayjs("2022/12/20")}
+                    minDate={new Date(formValue?.minend)}
+                    inputFormat="DD-MM-YYYY"
                     onChange={(newValue) => {
-                      setFormValue({
-                        ...formValue,
-                        EndDate: newValue,
-                      });
+                      setFormValue({ ...formValue, EndDate: newValue });
+                      setError({...formValue,EndDate:newValue})
                     }}
                     renderInput={(params) => (
                       <TextField
+                        sx={{ mt: 1 }}
                         {...params}
                         size="small"
                         fullWidth
@@ -616,9 +672,9 @@ const LocalInfo = () => {
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="flex-start">
                 <Typography
-                  variant="h6"
+                  sx={{ fontSize: 12 }}
+                  variant="subtitle-1"
                   component={"h6"}
-                  style={{ fontSize: 13 }}
                   color="secondary.contrastText"
                 >
                   VISA REQUEST NUMBER
@@ -637,6 +693,7 @@ const LocalInfo = () => {
                   options={visaReq}
                   renderInput={(params) => (
                     <TextField
+                      sx={{ mt: 1 }}
                       {...params}
                       label="Select"
                       error={error?.visaReq ? false : true}
@@ -647,42 +704,42 @@ const LocalInfo = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid
-          container
-          sx={12}
-          p={2}
-          direction="row"
-          style={{ backgroundColor: "#bcc8ce" }}
-          justifyContent="flex-end"
-          padding={2}
-          columnGap={3}
-        >
-          <Grid item sx={2}>
-            <Button
-              variant="outlined"
-              sx={{
-                backgroundColor: "primary.contrastText",
-              }}
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-          </Grid>
-          <Grid
-            item
-            sx={2}
-            // onClick={handleClicksnak({
-            //   vertical: "top",
-            //   horizontal: "right",
-            // })}
-          >
-            <Button variant="contained" type="submit" onClick={handleSubmit}>
-              {" "}
-              Submit
-            </Button>
-          </Grid>
-        </Grid>
       </FormControl>
+      <Grid
+        container
+        sx={12}
+        p={2}
+        direction="row"
+        style={{ backgroundColor: "#bcc8ce", position: "fixed", bottom: 0 }}
+        justifyContent="flex-end"
+        padding={2}
+        columnGap={3}
+      >
+        <Grid item sx={2}>
+          <Button
+            variant="outlined"
+            sx={{
+              backgroundColor: "primary.contrastText",
+            }}
+            onClick={handleCancel}
+          >
+            Cancel
+          </Button>
+        </Grid>
+        <Grid
+          item
+          sx={2}
+          // onClick={handleClicksnak({
+          //   vertical: "top",
+          //   horizontal: "right",
+          // })}
+        >
+          <Button variant="contained" type="submit" onClick={handleSubmit}>
+            {" "}
+            Submit
+          </Button>
+        </Grid>
+      </Grid>
       <Popover
         id={id}
         open={open}

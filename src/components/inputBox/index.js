@@ -17,7 +17,7 @@ export const InputBox = (props) => {
   return (
     <>
       <TextField
-        sx={{ "& .MuiInputBase-root": { padding: "0 !important" } }}
+        sx={{ "& .MuiInputBase-root": { padding: "0 !important",fontSize:'14px',width:"88%",alignContent:'center',ml:2} }}
         error={error}
         fullWidth
         label={label}
@@ -27,8 +27,8 @@ export const InputBox = (props) => {
         type={type}
         startAdornment={startAdornment}
         InputProps={InputProps}
-        size={size}
         name={name}
+        size={"small"}
       ></TextField>
     </>
   );

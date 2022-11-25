@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Button } from "@mui/material";
-import { AppBar, Typography, Toolbar } from "@mui/material";
+import { Grid, Button, Select, MenuItem, Box } from "@mui/material";
+import { AppBar, Typography } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import styled from "@emotion/styled";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,18 +10,30 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
 import usePagination from "@mui/material/usePagination";
 import ModeRoundedIcon from "@mui/icons-material/ModeRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import MailIcon from "@mui/icons-material/Mail";
 import Badge from "@mui/material/Badge";
 import { useNavigate } from "react-router-dom";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const LcaList = () => {
   let navigate = useNavigate();
   const [datas, setDatas] = useState("");
+  const [myPage, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    console.log(newPage, "new");
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    console.log(+event.target.value, "auto");
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -41,8 +54,9 @@ const LcaList = () => {
     display: "flex",
     size: "small",
   });
+  console.log(Math.floor(datas.length / rowsPerPage));
   const { items } = usePagination({
-    count: 20,
+    count: Math.ceil(datas.length / rowsPerPage),
     siblingCount: 0,
     boundaryCount: 0,
   });
@@ -51,15 +65,14 @@ const LcaList = () => {
   };
 
   useEffect(() => {
-   
     let listData = localStorage.getItem("showList");
     let mapData = JSON.parse(listData);
     setDatas(mapData);
-    console.log(mapData, "u");
+    console.log(mapData);
   }, []);
   const handleDelete = (id) => {
     let del = JSON.parse(localStorage.getItem("showList"));
-    let  deleteds = del.filter((items)=>items.formValue.id != id);
+    let deleteds = del.filter((items) => items.formValue.id != id);
     localStorage.setItem("showList", JSON.stringify(deleteds));
     setDatas(deleteds);
   };
@@ -67,6 +80,75 @@ const LcaList = () => {
     navigate("/info", {
       state: { item: item, index: indexVal },
     });
+  };
+  const nextBtn = () => {
+    if (myPage * rowsPerPage + rowsPerPage < datas.length) {
+      setPage((pre) => pre + 1);
+    }
+  };
+
+  const preBtn = () => {
+    if (myPage * rowsPerPage > 0) {
+      setPage((pre) => pre - 1);
+    }
+  };
+  const TableBodyData = ({ item, index }) => {
+    return (
+      <>
+        <StyledTableRow key={item.name}>
+          <StyledTableCell align="right">
+            {item?.formValue?.clasfition?.label}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            {item?.formValue?.EName}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            {item?.formValue?.jobRole?.label}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            {item?.formValue?.workLocation?.label}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            {item?.formValue?.destnation?.label}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            {item?.formValue?.visaType?.label}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            <Badge
+              badgeContent={2}
+              color="primary"
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <MailIcon color="action" />
+            </Badge>
+            {item?.formValue?.Email}
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            <IconButton
+              aria-label="delete"
+              color="primary"
+              variant="outlined"
+              onClick={() => handleEdit(item, index)}
+            >
+              <ModeRoundedIcon />
+            </IconButton>
+          </StyledTableCell>
+          <StyledTableCell align="right">
+            <IconButton
+              color="primary"
+              variant="outlined"
+              onClick={() => handleDelete(item?.formValue?.id)}
+            >
+              <DeleteForeverRoundedIcon />
+            </IconButton>
+          </StyledTableCell>
+        </StyledTableRow>
+      </>
+    );
   };
   return (
     <>
@@ -78,104 +160,88 @@ const LcaList = () => {
           alignItems="flex-start"
           padding={2}
         >
-          <Typography variant="p" color="primary" component="h5">
+          <Typography variant="p" color="primary" component="h5" mt={1} ml={1}>
             LCA REQUESTS
           </Typography>
-          <Button variant="outlined" onClick={handleMove}>
+          <Button variant="outlined" onClick={handleMove} sx={{ mr: 1 }}>
             NEW LcaList
           </Button>
         </Grid>
       </AppBar>
       <Grid item container p={3}>
         <Grid item container mt={0}>
-          <Paper sx={{ width: "100%", overflow: "hidden" }}>
-            <TableContainer sx={{ maxHeight: 400 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell align="right">
-                      LCA NUMBER&uarr;&darr;
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      ETA NAME&uarr;&darr;
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      JOB ROLE&uarr;&darr;
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      CITY&uarr;&darr;
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      COUNTRY&uarr;&darr;
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      VISATYPE&uarr;&darr;
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                      Email&uarr;&darr;
-                    </StyledTableCell>
+          <TableContainer
+            component={Paper}
+            sx={{ height: 422, overflow: "auto" }}
+          >
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="right">
+                    LCA NUMBER&uarr;&darr;
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    ETA NAME&uarr;&darr;
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    JOB ROLE&uarr;&darr;
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    CITY&uarr;&darr;
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    COUNTRY&uarr;&darr;
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    VISATYPE&uarr;&darr;
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    Email&uarr;&darr;
+                  </StyledTableCell>
 
-                    <StyledTableCell align="right">Edit</StyledTableCell>
-                    <StyledTableCell align="right">Delete</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {datas &&
-                    datas.map((item, index) => (
-                      <StyledTableRow key={item.name}>
-                        <StyledTableCell align="right">
-                          {item?.formValue?.clasfition?.label}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {item?.formValue?.EName}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {item?.formValue?.jobRole?.label}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {item?.formValue?.workLocation?.label}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {item?.formValue?.destnation?.label}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          {item?.formValue?.visaType?.label}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          <Badge
-                            badgeContent={2}
-                            color="primary"
-                            anchorOrigin={{
-                              vertical: "top",
-                              horizontal: "left",
-                            }}
-                          >
-                            <MailIcon color="action" />
-                          </Badge>
-                          {item?.formValue?.Email}
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          <Button
-                            variant="outlined"
-                            onClick={() => handleEdit(item, index)}
-                          >
-                            <ModeRoundedIcon />
-                          </Button>
-                        </StyledTableCell>
-                        <StyledTableCell align="right">
-                          <Button
-                            variant="outlined"
-                            onClick={() => handleDelete(item?.formValue?.id)}
-                          >
-                            <DeleteForeverRoundedIcon />
-                          </Button>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                  <StyledTableCell align="right">Edit</StyledTableCell>
+                  <StyledTableCell align="right">Delete</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody sx={{ display: {} }}>
+                {datas.length > 0 ? (
+                  datas
+                    .slice(
+                      myPage * rowsPerPage,
+                      myPage * rowsPerPage + rowsPerPage
+                    )
+                    .map((item, index) => (
+                      <TableBodyData item={item} index={index} />
+                    ))
+                ) : (
+                  <Box sx={{ position: "absolute", top: "45%", left: "37%" }}>
+                    <Typography
+                      variant="subtitle-1"
+                      component="h1"
+                      color="secondary.contrastText"
+                      justifyItems={"center"}
+                      ml={8}
+                      align="center"
+                    >
+                      <WarningAmberIcon sx={{ fontSize: "6rem" }} />
+                    </Typography>
+                    <Typography
+                      align="center"
+                      sx={{ fontSize: 16, xs: 12 }}
+                      variant="subtitle-1"
+                      component={"h6"}
+                      color="secondary.contrastText"
+                      justifyContent={"center"}
+                      ml={8}
+                    >
+                      {" "}
+                      DATA NOT FOUND{" "}
+                    </Typography>
+                  </Box>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
 
         <Grid
@@ -185,66 +251,80 @@ const LcaList = () => {
           mt={3}
           rowGap={{ xs: 2, md: 2, lg: 2 }}
         >
-          <Grid container spacing={6} xs={12} md={5} lg={3}>
-            <Grid item xs={3}>
-              <Autocomplete
-                id="disable-clearable"
-                disableClearable
-                options={count}
-                sx={{ width: 50 }}
-                size="small"
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </Grid>
-            <Grid item xs={9}>
-              <Typography variant="p" component={"h5"} mt={2}>
-                Showing 1 to 10 of 23 Requests
-              </Typography>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
+            <Grid container spacing={6}>
+              <Grid item xs={3}>
+                <Select
+                  value={rowsPerPage}
+                  sx={{ width: 65 }}
+                  size="small"
+                  onChange={handleChangeRowsPerPage}
+                >
+                  {count.map((c) => (
+                    <MenuItem value={c}>{c}</MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+              <Grid item xs={9}>
+                <Typography variant="p" component={"h5"} mt={2}>
+                  Showing {myPage * rowsPerPage} to{" "}
+                  {myPage * rowsPerPage + rowsPerPage} of {datas.length}{" "}
+                  Requests
+                </Typography>
+              </Grid>
             </Grid>
           </Grid>
-          <Grid spacing={3} xs={12} md={6} lg={3}>
-            <Grid container direction="row" justifyContent="flex-end">
-              <List>
-                {items.map(({ page, type, selected, ...item }, index) => {
-                  let children = null;
+          <Grid item xs={12} sm={12} md={6} lg={4}>
+            <Grid container direction="row" justifyContent={"flex-end"}>
+              <Grid item xs={12} sm={"auto"}>
+                <List>
+                  {items.map(({ page, type, selected, ...item }, index) => {
+                    let children = null;
 
-                  if (type === "start-ellipsis" || type === "end-ellipsis") {
-                    children = ".....";
-                  } else if (type === "page") {
-                    children = (
-                      <Button
-                        size="small"
-                        variant={selected ? "contained" : "outlined"}
-                        type="button"
-                        style={{
-                          fontWeight: selected ? "bold" : undefined,
-                        }}
-                        {...item}
-                      >
-                        {page}
-                      </Button>
-                    );
-                  } else {
-                    children = (
-                      <Button
-                        variant="outlined"
-                        type="button"
-                        {...item}
-                        size="small"
-                      >
-                        {type}
-                      </Button>
-                    );
-                  }
+                    if (type === "start-ellipsis" || type === "end-ellipsis") {
+                      children = ".....";
+                    } else if (type === "page") {
+                      children = (
+                        <Button
+                          size="small"
+                          variant={
+                            myPage == index - 1 ? "contained" : "outlined"
+                          }
+                          type="button"
+                          onClick={() => {
+                            setPage(index + 1);
+                          }}
+                          style={{
+                            fontWeight: selected ? "bold" : undefined,
+                          }}
+                        >
+                          {page}
+                        </Button>
+                      );
+                    } else {
+                      children = (
+                        <Button
+                          variant="outlined"
+                          type="button"
+                          size="small"
+                          onClick={() => {
+                            type == "next" ? nextBtn() : preBtn();
+                          }}
+                        >
+                          {type}
+                        </Button>
+                      );
+                    }
 
-                  return (
-                    <Typography variant="subtitle1" key={index}>
-                      {" "}
-                      {children}
-                    </Typography>
-                  );
-                })}
-              </List>
+                    return (
+                      <Typography variant="subtitle1" key={index}>
+                        {" "}
+                        {children}
+                      </Typography>
+                    );
+                  })}
+                </List>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -254,4 +334,4 @@ const LcaList = () => {
 };
 
 export default LcaList;
-const count = [1, 2, 3, 4, 5, 6];
+const count = [5, 10, 15, 20, 25, 30];

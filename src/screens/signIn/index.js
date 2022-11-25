@@ -33,10 +33,9 @@ const SignIn = (props) => {
   const handleClick = (newState) => () => {
     if (signData.email === "" && signData.password === "") {
       setState({ error: true, ...newState });
-    } 
+    }
   };
   const handleSubmit = () => {
-
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     let regexPsw = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{6,14}$/;
@@ -55,8 +54,8 @@ const SignIn = (props) => {
         setError1(true);
       }
     } else if (signData.email === "" && signData.password) {
-      if (signData.password && regexPsw.test(signData.password) === true) {
-      alert("Enter Email id");
+      if (signData.password && regexPsw.test(signData.password) === false) {
+        alert("Enter Email id");
         setError1(false);
         setError2(false);
       } else {
@@ -72,12 +71,12 @@ const SignIn = (props) => {
       setError2(true);
     } else if (
       regexEmail.test(signData.email) === true &&
-      regexPsw.test(signData.password) === true
+      regexPsw.test(signData.password) === false
     ) {
       console.log("success your efort dyson");
       setError1(false);
       setError2(false);
-      navigate('/list')
+      navigate("/list");
     }
   };
 
@@ -98,6 +97,7 @@ const SignIn = (props) => {
           direction={"column"}
           justify={"center"}
           alignItems={"center"}
+          p={1}
         >
           <Typography
             align="center"
@@ -107,67 +107,60 @@ const SignIn = (props) => {
           >
             Sign In
           </Typography>
-          <Grid
-            item
-            container
-            spacing={0}
-            direction={"column"}
-            rowSpacing={2}
-            mt={0.5}
-          >
+          <Grid item container spacing={0} direction={"column"} rowSpacing={2}>
             <Grid item xs={8} md={12} lg={10}>
-              <InputBox
-                error={error1}
-                type="text"
-                placeholder="Enter Email Id"
-                name="email"
-                helperText={error1 ? "Email should abc@gmail.com" : ""}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment
-                      position="start"
-                      sx={{ backgroundColor: " #D3DADD", padding: 4 }}
-                    >
-                      <DraftsIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={onChange}
-              />
+              <Grid item p={1}>
+                <InputBox
+                  error={error1}
+                  type="text"
+                  placeholder="Enter Email Id"
+                  name="email"
+                  helperText={error1 ? "Email should abc@gmail.com" : ""}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment
+                        position="start"
+                        sx={{ backgroundColor: " #D3DADD", padding:"22px 18px" }}
+                      >
+                        <DraftsIcon sx={{fontSize:'1rem'}}/>
+                      </InputAdornment>
+                    ),
+                  }}
+                  onChange={onChange}
+                />
+              </Grid>
             </Grid>
             <Grid item xs={8} md={12} lg={10}>
-              <InputBox
-                error={error2}
-                type="password"
-                placeholder="Enter password"
-                name="password"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment
-                      sx={{ backgroundColor: " #D3DADD", padding: 4 }}
+              <Grid item p={1}>
+                <InputBox
+                  error={error2}
+                  type="password"
+                  placeholder="Enter password"
+                  name="password"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment
                       position="start"
-                    >
-                      <LockIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={onChange}
-              />
+                        sx={{ backgroundColor: " #D3DADD", padding:"22px 18px", }}
+                       
+                      >
+                        <LockIcon sx={{fontSize:"1rem"}}/>
+                      </InputAdornment>
+                    ),
+                  }}
+                  onChange={onChange}
+                />
+              </Grid>
             </Grid>
 
-            <Grid
-              item
-              container
-              direction="row"
-              justifyContent="space-between"
-            
-            >
-              <Grid item xs={3}>
+            <Grid item container direction="row" justifyContent="space-between">
+              <Grid item xs={5} ml={3}>
                 <Link href="/reset">Forgot Password?</Link>
               </Grid>
               <Grid
                 item
                 xs={3}
+                mr={5}
                 align="right"
                 onClick={handleClick({
                   vertical: "top",
@@ -178,6 +171,7 @@ const SignIn = (props) => {
                   variant="contained"
                   type="submit"
                   onClick={handleSubmit}
+                  sx={{ fontSize: "12px" }}
                 >
                   SIGN IN
                 </Button>
@@ -186,8 +180,6 @@ const SignIn = (props) => {
           </Grid>
         </Grid>
       </Paper>
-
-
 
       {/* Pleace Fill Your Password... and Password..!!*/}
       <Snackbar
