@@ -54,9 +54,8 @@ const LcaList = () => {
     display: "flex",
     size: "small",
   });
-  console.log(Math.floor(datas.length / rowsPerPage));
   const { items } = usePagination({
-    count: Math.ceil(datas.length / rowsPerPage),
+    count: Math.ceil(datas?.length / rowsPerPage),
     siblingCount: 0,
     boundaryCount: 0,
   });
@@ -204,7 +203,8 @@ const LcaList = () => {
                 </TableRow>
               </TableHead>
               <TableBody sx={{ display: {} }}>
-                {datas.length > 0 ? (
+               { console.log(datas?.length,"ddddddd")}
+                {datas?.length > 0 ? (
                   datas
                     .slice(
                       myPage * rowsPerPage,
@@ -268,7 +268,7 @@ const LcaList = () => {
               <Grid item xs={9}>
                 <Typography variant="p" component={"h5"} mt={2}>
                   Showing {myPage * rowsPerPage} to{" "}
-                  {myPage * rowsPerPage + rowsPerPage} of {datas.length}{" "}
+                  {myPage * rowsPerPage + rowsPerPage} of {datas?.length}{" "}
                   Requests
                 </Typography>
               </Grid>
