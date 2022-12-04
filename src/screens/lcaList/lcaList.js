@@ -18,6 +18,14 @@ import Badge from "@mui/material/Badge";
 import { useNavigate } from "react-router-dom";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
+const Icon = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    left: "12%",
+  },
+  [theme.breakpoints.up('md')]: {
+    left: "37%",
+  }
+}));
 const LcaList = () => {
   let navigate = useNavigate();
   const [datas, setDatas] = useState("");
@@ -214,7 +222,7 @@ const LcaList = () => {
                       <TableBodyData item={item} index={index} />
                     ))
                 ) : (
-                  <Box sx={{ position: "absolute", top: "45%", left: "37%" }}>
+                  <Icon sx={{ position: "absolute", top: "45%", left: "37%" }}>
                     <Typography
                       variant="subtitle-1"
                       component="h1"
@@ -237,7 +245,7 @@ const LcaList = () => {
                       {" "}
                       DATA NOT FOUND{" "}
                     </Typography>
-                  </Box>
+                  </Icon>
                 )}
               </TableBody>
             </Table>

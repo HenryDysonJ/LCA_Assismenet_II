@@ -13,7 +13,7 @@ const ResetPassword = () => {
   const [email, setEmail] = useState({
     email: "",
   });
-  let navigate =useNavigate();
+  let navigate = useNavigate();
   const onChangeEmail = (e) => {
     setEmail({ ...email, [e.target.name]: e.target.value });
   };
@@ -37,7 +37,7 @@ const ResetPassword = () => {
       console.log("Pleace be fill abc@gmail.com format");
       setError(true);
       setOpen(true);
-      navigate('/')
+      navigate("/");
     }
   };
 
@@ -100,15 +100,14 @@ const ResetPassword = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment
-                  position="start"
-                  sx={{ backgroundColor: " #D3DADD", padding:"22px 18px", }}
-                 
+                    position="start"
+                    sx={{ backgroundColor: " #D3DADD", padding: "22px 18px" }}
                   >
                     <DraftsIcon />
                   </InputAdornment>
                 ),
               }}
-              onChangeFun={(e)=>onChangeEmail(e)}
+              onChangeFun={(e) => onChangeEmail(e)}
             />
           </Grid>
 
@@ -118,7 +117,6 @@ const ResetPassword = () => {
             direction="row"
             justifyContent="space-between"
             rowGap={2}
-           
           >
             <Grid item xs={3} ml={2}>
               <Link href="/">&#60; Back to Sign In</Link>

@@ -1,4 +1,11 @@
-import { Grid, Paper, Link, Button, Typography } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Link,
+  Button,
+  Typography,
+  styled,
+} from "@mui/material";
 import React, { useState } from "react";
 import { InputBox } from "../../components/inputBox";
 import { useTheme } from "@mui/material";
@@ -8,6 +15,27 @@ import LockIcon from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
+
+const PaperStyles = styled(Paper)({
+  padding: "26px 0px",
+  width: 460,
+  color: "#004d40",
+  minHeight: "32vh",
+  marginTop: "20vh",
+  elevation: "4",
+});
+
+const Body = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  alignItem: "center",
+  margin: 21,
+});
+const ButnStyle = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down('sm','md')]: {
+    padding: "0px 28px 5px 24px",
+  }
+}));
 
 const SignIn = (props) => {
   const [error1, setError1] = useState(false);
@@ -23,18 +51,21 @@ const SignIn = (props) => {
     vertical: "top",
     horizontal: "center",
   });
+  const { vertical, horizontal, error } = state;
   const handleClose = () => {
     setState({ ...state, error: false });
   };
   const onChange = (e) => {
     setSignData({ ...signData, [e.target.name]: e.target.value });
+    console.log({ ...signData, [e.target.name]: e.target.value });
   };
-  const { vertical, horizontal, error } = state;
   const handleClick = (newState) => () => {
     if (signData.email === "" && signData.password === "") {
       setState({ error: true, ...newState });
     }
   };
+  console.log(signData);
+
   const handleSubmit = () => {
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -81,33 +112,15 @@ const SignIn = (props) => {
   };
 
   const theme = useTheme(props);
-  const paperStyles = {
-    padding: 50,
-    height: "40vh",
-    width: 470,
-    margin: "100px auto",
-    color: "#004d40",
-  };
+
   return (
-    <>
-      <Paper elevation={3} style={paperStyles}>
-        <Grid
-          container
-          spacing={1}
-          direction={"column"}
-          justify={"center"}
-          alignItems={"center"}
-          p={1}
-        >
-          <Typography
-            align="center"
-            variant=""
-            component={"h2"}
-            color="secondary.light"
-          >
+    <Body>
+      <PaperStyles>
+        <Grid container spacing={1} direction={"column"}>
+          <Typography align="center" component={"h2"} color="secondary.light">
             Sign In
           </Typography>
-          <Grid item container spacing={0} direction={"column"} rowSpacing={2}>
+          <Grid item container direction={"column"} rowSpacing={2}>
             <Grid item xs={8} md={12} lg={10}>
               <Grid item p={1}>
                 <InputBox
@@ -120,13 +133,16 @@ const SignIn = (props) => {
                     startAdornment: (
                       <InputAdornment
                         position="start"
-                        sx={{ backgroundColor: " #D3DADD", padding:"22px 18px" }}
+                        sx={{
+                          backgroundColor: " #D3DADD",
+                          padding: "22px 18px",
+                        }}
                       >
-                        <DraftsIcon sx={{fontSize:'1rem'}}/>
+                        <DraftsIcon sx={{ fontSize: "1rem" }} />
                       </InputAdornment>
                     ),
                   }}
-                  onChange={onChange}
+                  onChange={(e) => onChange(e)}
                 />
               </Grid>
             </Grid>
@@ -140,48 +156,58 @@ const SignIn = (props) => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment
-                      position="start"
-                        sx={{ backgroundColor: " #D3DADD", padding:"22px 18px", }}
-                       
+                        position="start"
+                        sx={{
+                          backgroundColor: " #D3DADD",
+                          padding: "22px 18px",
+                        }}
                       >
-                        <LockIcon sx={{fontSize:"1rem"}}/>
+                        <LockIcon sx={{ fontSize: "1rem" }} />
                       </InputAdornment>
                     ),
                   }}
-                  onChange={onChange}
+                  onChange={(e) => onChange(e)}
                 />
               </Grid>
             </Grid>
-
-            <Grid item container direction="row" justifyContent="space-between">
-              <Grid item xs={5} ml={3}>
-                <Link href="/reset">Forgot Password?</Link>
-              </Grid>
+            <ButnStyle item xs={12} md={6} lg={6} sx={{ padding: "0 45px 5px 25px" }}>
               <Grid
-                item
-                xs={3}
-                mr={5}
-                align="right"
-                onClick={handleClick({
-                  vertical: "top",
-                  horizontal: "center",
-                })}
+                container
+                display="flex"
+                direction="row"
+                justifyContent="space-between"
+                spacing={2}
               >
-                <Button
-                  variant="contained"
-                  type="submit"
-                  onClick={handleSubmit}
-                  sx={{ fontSize: "12px" }}
+                <Grid item xs={12} sm={12} md={7} lg={7}>
+                  <Link href="/reset">Forgot Password?</Link>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={12}
+                  md={4}
+                  lg={4}
+                  onClick={handleClick({
+                    vertical: "top",
+                    horizontal: "center",
+                  })}
                 >
-                  SIGN IN
-                </Button>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    type="submit"
+                    onClick={handleSubmit}
+                    sx={{ fontSize: "12px" }}
+                  >
+                    SIGN IN
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
+            </ButnStyle>
           </Grid>
         </Grid>
-      </Paper>
-
-      {/* Pleace Fill Your Password... and Password..!!*/}
+      </PaperStyles>
+      {/* Pleace Fill Your Pas sword... and Password..!!*/}
       <Snackbar
         open={error}
         autoHideDuration={6000}
@@ -197,7 +223,7 @@ const SignIn = (props) => {
           Pleace Fill Your Password... and Password..!!
         </Alert>
       </Snackbar>
-    </>
+    </Body>
   );
 };
 

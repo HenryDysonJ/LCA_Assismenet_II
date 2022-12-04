@@ -116,7 +116,7 @@ const LocalInfo = () => {
     };
 
     if (!formValue) {
-      setError(undefined);
+      // setError(undefined);
     } else if (formValue.id) {
       // edit Exist new list
       let editId = formValue.id;
@@ -614,10 +614,12 @@ const LocalInfo = () => {
                         minend: moment(disableDate),
                         EndDate: null,
                       });
-                      setError( {...formValue,
+                      setError({
+                        ...formValue,
                         StartDate: newValue,
                         minend: moment(disableDate),
-                        EndDate: null,})
+                        EndDate: null,
+                      });
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -654,7 +656,7 @@ const LocalInfo = () => {
                     inputFormat="DD-MM-YYYY"
                     onChange={(newValue) => {
                       setFormValue({ ...formValue, EndDate: newValue });
-                      setError({...formValue,EndDate:newValue})
+                      setError({ ...formValue, EndDate: newValue });
                     }}
                     renderInput={(params) => (
                       <TextField

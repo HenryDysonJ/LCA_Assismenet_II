@@ -1,4 +1,4 @@
-import {  TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
 export const InputBox = (props) => {
   const {
@@ -11,13 +11,21 @@ export const InputBox = (props) => {
     size,
     name,
     error,
-    value
+    value,
   } = props;
 
   return (
     <>
       <TextField
-        sx={{ "& .MuiInputBase-root": { padding: "0 !important",fontSize:'14px',width:"88%",alignContent:'center',ml:2} }}
+        sx={{
+          "& .MuiInputBase-root": {
+            padding: "0 !important",
+            fontSize: "14px",
+            width: "88%",
+            alignContent: "center",
+            ml: 2,
+          },
+        }}
         error={error}
         fullWidth
         label={label}
@@ -33,5 +41,3 @@ export const InputBox = (props) => {
     </>
   );
 };
-
-
