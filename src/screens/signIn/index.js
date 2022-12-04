@@ -17,7 +17,7 @@ import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 
 const PaperStyles = styled(Paper)({
-  padding: "26px 0px",
+  padding: "26px 5px",
   width: 460,
   color: "#004d40",
   minHeight: "32vh",
@@ -116,7 +116,7 @@ const SignIn = (props) => {
   return (
     <Body>
       <PaperStyles>
-        <Grid container spacing={1} direction={"column"}>
+        <Grid container spacing={1} direction={"column"} ml={1}>
           <Typography align="center" component={"h2"} color="secondary.light">
             Sign In
           </Typography>
