@@ -202,3 +202,128 @@
 // };
 
 // export default SignIn;
+
+
+// Local Info 
+  {/* <Autocomplete
+                  fullWidth
+                  size="small"
+                  id="combo-box-demo"
+                  options={clasification}
+                  onChange={(e, val) => ComOnchangeVal(e, val, "clasfition")}
+                  value={formValue?.clasfition}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.clasfition ? false : true}
+                    />
+                  )}
+                />             
+            */}
+  {/* <Autocomplete
+                  disablePortal
+                  fullWidth
+                  size="small"
+                  id="combo-box-demo"
+                  options={jobRole}
+                  onChange={(e, val) => ComOnchangeVal(e, val, "jobRole")}
+                  value={formValue?.jobRole}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.jobRole ? false : true}
+                    />
+                  )}
+                /> */}
+                {/* <Autocomplete
+                  disablePortal
+                  fullWidth
+               
+                  name="workLocation"
+                  size="small"
+                  id="combo-box-demo"
+                  options={workLocation}
+                  value={formValue?.workLocation}
+                  onChange={(e, val) => ComOnchangeVal(e, val, "workLocation")}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select"
+                      error={error?.workLocation ? false : true}
+                    />
+                  )}
+                /> */}
+                 {/* <Autocomplete
+                  disablePortal
+                  fullWidth
+                  size="small"
+                  value={formValue?.visaReq}
+                  onChange={(e, val) => ComOnchangeVal(e, val, "visaReq")}
+                  id="combo-box-demo"
+                  options={visaReq}
+                  renderInput={(params) => (
+                    <TextField
+                      sx={{ mt: 1 }}
+                      {...params}
+                      label="Select"
+                      error={error?.visaReq ? false : true}
+                    />
+                  )}
+                /> */}
+              //   <Snackbar
+              //   open={openss}
+              //   autoHideDuration={6000}
+              //   onClose={handleClosed}
+              //   anchorOrigin={{ vertical, horizontal }}
+              // >
+              //   <Alert
+              //     onClose={handleClosed}
+              //     variant="filled"
+              //     severity="info"
+              //     sx={{ width: "100%" }}
+              //   >
+              //     Your Form has Successfuly Submitted
+              //   </Alert>
+              // </Snackbar>
+            //   <Popover
+            //   id={id}
+            //   open={open}
+            //   anchorEl={anchorEl}
+            //   onClose={handleClose}
+            //   anchorOrigin={{
+            //     vertical: "left",
+            //     horizontal: "right",
+            //   }}
+            // >
+            //   <Typography sx={{ p: 1 }}>This is LCA Info Pleace note </Typography>
+            // </Popover>
+
+            //datanot found
+            // (
+            //   <Icon sx={{ position: "absolute", top: "45%", left: "37%" }}>
+            //     <Typography
+            //       variant="subtitle-1"
+            //       component="h1"
+            //       color="secondary.contrastText"
+            //       justifyItems={"center"}
+            //       ml={8}
+            //       align="center"
+            //     >
+            //       <WarningAmberIcon sx={{ fontSize: "6rem" }} />
+            //     </Typography>
+            //     <Typography
+            //       align="center"
+            //       sx={{ fontSize: 16, xs: 12 }}
+            //       variant="subtitle-1"
+            //       component={"h6"}
+            //       color="secondary.contrastText"
+            //       justifyContent={"center"}
+            //       ml={8}
+            //     >
+            //       {" "}
+            //       DATA NOT FOUND{" "}
+            //     </Typography>
+            //   </Icon>
+            // )

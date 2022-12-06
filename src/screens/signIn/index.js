@@ -1,14 +1,6 @@
-import {
-  Grid,
-  Paper,
-  Link,
-  Button,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Grid, Paper, Link, Button, Typography, styled } from "@mui/material";
 import React, { useState } from "react";
 import { InputBox } from "../../components/inputBox";
-import { useTheme } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import LockIcon from "@mui/icons-material/Lock";
@@ -32,17 +24,19 @@ const Body = styled("div")({
   margin: 21,
 });
 const ButnStyle = styled(Grid)(({ theme }) => ({
-  [theme.breakpoints.down('sm','md')]: {
+  [theme.breakpoints.down("sm", "md")]: {
     padding: "0px 28px 5px 24px",
-  }
+  },
 }));
 
 const SignIn = (props) => {
-  const [error1, setError1] = useState(false);
-  const [error2, setError2] = useState(false);
   const [signData, setSignData] = useState({
     email: "",
     password: "",
+    error: {
+      email: "",
+      password: "",
+    },
   });
   let navigate = useNavigate();
 
@@ -55,68 +49,41 @@ const SignIn = (props) => {
   const handleClose = () => {
     setState({ ...state, error: false });
   };
-  const onChange = (e) => {
-    setSignData({ ...signData, [e.target.name]: e.target.value });
-    console.log({ ...signData, [e.target.name]: e.target.value });
-  };
   const handleClick = (newState) => () => {
     if (signData.email === "" && signData.password === "") {
       setState({ error: true, ...newState });
     }
   };
-  console.log(signData);
+  const onChange = (key, val) => {
+    const error = signData?.error;
+    error[key] = "";
+    setSignData({ ...signData, [key]: val, error });
+  };
+  const validation = () => {
+    console.log("validation");
+    let isError = true;
+    let error = signData?.error;
 
+    if (signData?.email.length === 0) {
+      isError = false;
+      error.email = "Invalid email";
+    }
+    if (signData?.password.length === 0) {
+      isError = false;
+      error.password = "Invalid password";
+    }
+    setSignData({ ...signData, error });
+    return isError;
+  };
   const handleSubmit = () => {
-    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-    let regexPsw = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{6,14}$/;
-
-    if (signData.email === "" && signData.password === "") {
-      console.log("Pleace Enter Email id and password");
-      setError1(true);
-      setError2(true);
-    } else if (signData.email && signData.password === "") {
-      if (signData.email && regexEmail.test(signData.email) === true) {
-        alert("Pleace be Uper, Lower, symbls,numbers set your password");
-        setError1(false);
-        setError2(true);
-      } else {
-        alert("Pleace be fill abc@gmail.com format");
-        setError1(true);
-      }
-    } else if (signData.email === "" && signData.password) {
-      if (signData.password && regexPsw.test(signData.password) === false) {
-        alert("Enter Email id");
-        setError1(false);
-        setError2(false);
-      } else {
-        alert("Pleace be Uper, Lower, symbls,numbers set your password");
-        setError1(true);
-      }
-    } else if (
-      regexEmail.test(signData.email) === false &&
-      regexPsw.test(signData.password) === false
-    ) {
-      alert("Your Email Id and Password Incorrectly");
-      setError1(true);
-      setError2(true);
-    } else if (
-      regexEmail.test(signData.email) === true &&
-      regexPsw.test(signData.password) === false
-    ) {
-      console.log("success your efort dyson");
-      setError1(false);
-      setError2(false);
+    if (validation()) {
       navigate("/list");
     }
   };
-
-  const theme = useTheme(props);
-
   return (
     <Body>
       <PaperStyles>
-        <Grid container spacing={1} direction={"column"} >
+        <Grid container spacing={1} direction={"column"}>
           <Typography align="center" component={"h2"} color="secondary.light">
             Sign In
           </Typography>
@@ -124,11 +91,10 @@ const SignIn = (props) => {
             <Grid item xs={8} md={12} lg={10}>
               <Grid item p={1}>
                 <InputBox
-                  error={error1}
+                  error={signData?.error?.email ? true : false}
                   type="text"
                   placeholder="Enter Email Id"
-                  name="email"
-                  helperText={error1 ? "Email should abc@gmail.com" : ""}
+                  onChange={(e) => onChange("email", e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment
@@ -142,17 +108,16 @@ const SignIn = (props) => {
                       </InputAdornment>
                     ),
                   }}
-                  onChange={(e) => onChange(e)}
                 />
               </Grid>
             </Grid>
             <Grid item xs={8} md={12} lg={10}>
               <Grid item p={1}>
                 <InputBox
-                  error={error2}
+                  error={signData?.error?.password ? true : false}
                   type="password"
                   placeholder="Enter password"
-                  name="password"
+                  onChange={(e) => onChange("password", e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment
@@ -166,11 +131,16 @@ const SignIn = (props) => {
                       </InputAdornment>
                     ),
                   }}
-                  onChange={(e) => onChange(e)}
                 />
               </Grid>
             </Grid>
-            <ButnStyle item xs={12} md={6} lg={6} sx={{ padding: "0 45px 5px 25px" }}>
+            <ButnStyle
+              item
+              xs={12}
+              md={6}
+              lg={6}
+              sx={{ padding: "0 45px 5px 25px" }}
+            >
               <Grid
                 container
                 display="flex"
@@ -207,7 +177,6 @@ const SignIn = (props) => {
           </Grid>
         </Grid>
       </PaperStyles>
-      {/* Pleace Fill Your Pas sword... and Password..!!*/}
       <Snackbar
         open={error}
         autoHideDuration={6000}
@@ -220,7 +189,7 @@ const SignIn = (props) => {
           variant="filled"
           sx={{ width: "100%" }}
         >
-          Pleace Fill Your Password... and Password..!!
+          Pleace Fill Your Email..!! and Password..!!
         </Alert>
       </Snackbar>
     </Body>

@@ -9,23 +9,18 @@ import {
 } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import Autocomplete from "@mui/material/Autocomplete";
-import dayjs from "dayjs";
 import TextField from "@mui/material/TextField";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import Popover from "@mui/material/Popover";
 import { useNavigate, useLocation } from "react-router-dom";
 import nextId from "react-id-generator";
-import { Alert, Snackbar } from "@mui/material";
 import moment from "moment/moment";
+import { Select } from "../../components/autoComplete";
+import { InputLable } from "../../components/textInput";
+import { DateCalendar } from "../../components/dateCalendar";
+import { HeadingInfo } from "../../components/typographyHead";
+import { ButnGrid } from "./styleInfo";
 
 const LocalInfo = () => {
   const [value, setValue] = useState("1");
-  const [anchorEl, setAnchorEl] = useState(null);
-
   const [error, setError] = useState({
     clasfition: !null,
     workLocation: !null,
@@ -42,11 +37,6 @@ const LocalInfo = () => {
     workPerNo: !null,
     StartDate: !null,
     EndDate: !null,
-  });
-  const [state, setState] = useState({
-    openss: false,
-    vertical: "top",
-    horizontal: "center",
   });
   const [formValue, setFormValue] = useState({
     id: "",
@@ -68,9 +58,6 @@ const LocalInfo = () => {
 
   let navigate = useNavigate();
   let unicId = nextId();
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-  const { vertical, horizontal, openss } = state;
   let editData = useLocation();
 
   useEffect(() => {
@@ -80,28 +67,13 @@ const LocalInfo = () => {
   }, [editData.length > 0]);
 
   const ComOnchangeVal = (e, val, type) => {
+    let error = formValue?.error;
     setFormValue({
       ...formValue,
       [type]: val,
     });
     setError({ ...formValue, [type]: val });
   };
-  const handleClicksnak = (newState) => () => {
-    setState({ openss: true, ...newState });
-  };
-
-  const handleClosed = () => {
-    setState({ ...state, openss: false });
-    navigate("/list");
-  };
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleChange = (newValue) => {
     setValue(newValue);
   };
@@ -109,14 +81,27 @@ const LocalInfo = () => {
   const handleCancel = () => {
     navigate("/list");
   };
+  const validation = () => {
+    let isValid = true;
+    let error = formValue?.error;
+    // chech clasification
+    if (formValue?.Email?.length > 0) {
+      isValid = false;
+    }
+    setFormValue({ ...formValue, error });
+    return isValid;
+  };
   const handleSubmit = () => {
+    if (validation()) {
+    }
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
     let showList = [];
     const show = {
       formValue,
     };
-
     if (!formValue) {
-      // setError(undefined);
+      setError(true);
     } else if (formValue.id) {
       // edit Exist new list
       let editId = formValue.id;
@@ -124,11 +109,30 @@ const LocalInfo = () => {
       list[list.findIndex((val) => val.formValue.id === editId)] = show;
       showList = list;
       localStorage.setItem("showList", JSON.stringify(showList));
-      navigate("/list");
+      if (
+        formValue.Email &&
+        regexEmail.test(formValue.Email) === true &&
+        formValue.EName &&
+        formValue.ENumber &&
+        formValue.ECode &&
+        formValue.Email &&
+        formValue.AsstReqNo &&
+        formValue.workPerNo
+      ) {
+        navigate("/list");
+      }
     } else if (formValue) {
       //  create new list
-      let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      if (formValue.Email && regexEmail.test(formValue.Email) === true) {
+      if (
+        formValue.Email &&
+        regexEmail.test(formValue.Email) === true &&
+        formValue.EName &&
+        formValue.ENumber &&
+        formValue.ECode &&
+        formValue.Email &&
+        formValue.AsstReqNo &&
+        formValue.workPerNo
+      ) {
         formValue["id"] = unicId;
         showList.push(show);
         showList = showList.concat(
@@ -137,7 +141,7 @@ const LocalInfo = () => {
         localStorage.setItem("showList", JSON.stringify(showList));
         navigate("/list");
       } else {
-        setError(true);
+        setError(false);
       }
     }
   };
@@ -165,125 +169,37 @@ const LocalInfo = () => {
           >
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="space-between">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component="h6"
-                  style={{ fontSize: 13 }}
-                  color="secondary.contrastText"
-                >
-                  LCA CLASIFICATION
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  component={"subtitle1"}
-                  style={{ fontSize: 10 }}
-                  color="secondary.contrastText"
-                >
-                  <InfoOutlinedIcon
-                    onClick={handleClick}
-                    aria-describedby={id}
-                    sx={{ fontSize: "20px" }}
-                  />
-                </Typography>
-
-                <Autocomplete
-                  fullWidth
-                  size="small"
-                  id="combo-box-demo"
+                <Select
+                  label="LCA CLASIFICATION"
+                  IconTitle="Note this is LCA Information"
                   options={clasification}
                   onChange={(e, val) => ComOnchangeVal(e, val, "clasfition")}
                   value={formValue?.clasfition}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Select"
-                      error={error?.clasfition ? false : true}
-                    />
-                  )}
+                  isError={error?.clasfition ? false : true}
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="space-between">
-                <Typography
-                  component={"h6"}
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  color="secondary.contrastText"
-                >
-                  ROLE
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  component={"subtitle1"}
-                  style={{ fontSize: 10 }}
-                  color="secondary.contrastText"
-                >
-                  <InfoOutlinedIcon
-                    onClick={handleClick}
-                    aria-describedby={id}
-                    sx={{ fontSize: "20px" }}
-                  />
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  size="small"
-                  id="combo-box-demo"
+                <Select
+                  label=" ROLE"
+                  IconTitle="Note this is ROLE Information"
                   options={jobRole}
                   onChange={(e, val) => ComOnchangeVal(e, val, "jobRole")}
                   value={formValue?.jobRole}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Select"
-                      error={error?.jobRole ? false : true}
-                    />
-                  )}
+                  isError={error?.jobRole ? false : true}
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="space-between">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  NUMBER OF WORK LOCATION
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  component={"subtitle1"}
-                  style={{ fontSize: 10 }}
-                  color="secondary.contrastText"
-                  value=""
-                >
-                  <InfoOutlinedIcon
-                    onClick={handleClick}
-                    aria-describedby={id}
-                    sx={{ fontSize: "20px" }}
-                  />
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  error
-                  name="workLocation"
-                  size="small"
-                  id="combo-box-demo"
+                <Select
+                  label=" NUMBER OF WORK LOCATION"
+                  IconTitle="Note this is WORK LOCATION Information"
                   options={workLocation}
-                  value={formValue?.workLocation}
                   onChange={(e, val) => ComOnchangeVal(e, val, "workLocation")}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Select"
-                      error={error?.workLocation ? false : true}
-                    />
-                  )}
+                  value={formValue?.workLocation}
+                  isError={error?.workLocation ? false : true}
                 />
               </Grid>
             </Grid>
@@ -293,13 +209,7 @@ const LocalInfo = () => {
             p={1}
             sx={{ borderBottom: "1px solid lightGray", sm: 12, sx: 12 }}
           >
-            <Typography
-              variant="subtitle-1"
-              component="h6"
-              sx={{ fontSize: 14 }}
-            >
-              EMPOYEE PORSONAL INFORMATION{" "}
-            </Typography>
+            <HeadingInfo lable=" EMPOYEE PORSONAL INFORMATION" />
           </Grid>
 
           <Grid
@@ -309,90 +219,37 @@ const LocalInfo = () => {
           >
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  EMPLOYEE NUMBER
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <TextField
-                  sx={{ mt: 1 }}
-                  fullWidth
-                  error={error?.ENumber ? false : true}
-                  size="small"
-                  type="text"
+                <InputLable
+                  lable="EMPLOYEE NUMBER"
                   value={formValue?.ENumber}
-                  fullwidth
-                  InputProps={{ name: "ENumber" }}
                   placeholder="Enter Emploee Number"
+                  isError={error?.ENumber ? false : true}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "ENumber")
                   }
-                  id="fullWidth"
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  EMPLOYEE NAME
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <TextField
-                  sx={{ mt: 1 }}
-                  error={error?.EName ? false : true}
-                  size="small"
-                  type="text"
-                  fullwidth
+                <InputLable
+                  lable="  EMPLOYEE NAME"
                   value={formValue?.EName}
-                  InputProps={{ name: "EName" }}
-                  placeholder="Enter Emploee Full Name"
+                  placeholder="Enter Emploee Name"
+                  isError={error?.EName ? false : true}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "EName")
                   }
-                  fullWidth
-                  id="fullWidth"
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  EMPLOYEE CODE
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <TextField
-                  sx={{ mt: 1 }}
-                  fullWidth
-                  id="fullWidth"
-                  error={error?.ECode ? false : true}
-                  size="small"
-                  fullwidth
+                <InputLable
+                  lable="  EMPLOYEE CODE"
                   value={formValue?.ECode}
-                  InputProps={{ name: "ECode" }}
-                  placeholder="Enter the ECode "
+                  placeholder="Enter Emploee Code"
+                  isError={error?.ECode ? false : true}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "ECode")
                   }
@@ -403,29 +260,12 @@ const LocalInfo = () => {
               {" "}
               {/* Email id */}
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  OFFICIAL EMAIL ID
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <TextField
-                  sx={{ mt: 1 }}
-                  fullWidth
-                  id="fullWidth"
-                  error={error?.Email ? false : true}
-                  size="small"
-                  fullwidth
+                <InputLable
+                  lable="OFFICIAL EMAIL ID"
                   value={formValue?.Email}
-                  InputProps={{ name: "Email" }}
-                  placeholder="Enter the Email "
-                  helperText={"Use abc@gmail.com format"}
+                  placeholder="Enter the Email"
+                  isError={error?.Email ? false : true}
+                  // helperText={"Use abc@gmail.com format"}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "Email")
                   }
@@ -439,13 +279,7 @@ const LocalInfo = () => {
             sx={{ borderBottom: "1px solid lightGray", sm: 12, sx: 12 }}
             mt={0}
           >
-            <Typography
-              variant="subtitle-1"
-              component="h6"
-              sx={{ fontSize: 14 }}
-            >
-              ASSIGNMENT INFORMATION{" "}
-            </Typography>
+            <HeadingInfo lable="ASSIGNMENT INFORMATION" />
           </Grid>
           <Grid
             container
@@ -454,128 +288,49 @@ const LocalInfo = () => {
           >
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  DESTINATION COUNTRY
-                </Typography>
-                <Typography color="secondary.dark" variant="subtitle">
-                  {" "}
-                  *
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  size="small"
-                  id="combo-box-demo"
+                <Select
+                  label="  DESTINATION COUNTRY"
                   options={destnation}
-                  value={formValue?.destnation}
                   onChange={(e, val) => ComOnchangeVal(e, val, "destnation")}
-                  renderInput={(params) => (
-                    <TextField
-                      sx={{ mt: 1 }}
-                      {...params}
-                      placeholder=" Select Destination"
-                      error={error?.destnation ? false : true}
-                    />
-                  )}
+                  value={formValue?.destnation}
+                  isError={error?.destnation ? false : true}
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  VISA TYPE
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  size="small"
-                  id="combo-box-demo"
+                <Select
+                  label=" VISA TYPE"
                   options={visaType}
                   value={formValue?.visaType}
                   onChange={(e, val) => ComOnchangeVal(e, val, "visaType")}
-                  renderInput={(params) => (
-                    <TextField
-                      sx={{ mt: 1 }}
-                      {...params}
-                      placeholder="Select Visa"
-                      error={error?.visaType ? false : true}
-                    />
-                  )}
+                  isError={error?.visaType ? false : true}
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  ASSIGNMENT REQUEST NO
-                </Typography>
-                <Typography color="secondary.dark" variant="subtitle">
-                  {" "}
-                  *
-                </Typography>
-                <TextField
-                  sx={{ mt: 1 }}
-                  fullWidth
-                  error={error?.AsstReqNo ? false : true}
-                  size="small"
-                  fullwidth
+                <InputLable
+                  lable=" ASSIGNMENT REQUEST NO"
                   value={formValue?.AsstReqNo}
                   placeholder="Enter Assignment Request No"
-                  InputProps={{ name: "AsstReqNo" }}
+                  isError={error?.AsstReqNo ? false : true}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "AsstReqNo")
                   }
-                  id="fullWidth"
                 />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               <Grid container justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  WORK PERMIT REQUEST NO
-                </Typography>
-                <Typography color="secondary.dark" variant="subtitle">
-                  {" "}
-                  *
-                </Typography>
-                <TextField
-                  sx={{ mt: 1 }}
-                  fullWidth
-                  error={error?.workPerNo ? false : true}
-                  size="small"
-                  type="text"
+                <InputLable
+                  lable="WORK PERMIT REQUEST NO"
                   value={formValue?.workPerNo}
-                  fullwidth
                   placeholder="Enter Work Permit Request No"
-                  InputProps={{ name: "workPerNo" }}
+                  isError={error?.workPerNo ? false : true}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "workPerNo")
                   }
-                  id="fullWidth"
                 />
               </Grid>
             </Grid>
@@ -587,132 +342,76 @@ const LocalInfo = () => {
             mt={2}
           >
             <Grid item xs={12} md={6} lg={4}>
-              <Grid container direction="row" justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  WORK PERMIT START DATE
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    disablePast
-                    inputFormat="DD-MM-YYYY"
-                    value={formValue?.StartDate}
-                    onChange={(newValue) => {
-                      let dateStart = newValue.$d;
-                      let disableDate = moment(dateStart).add(1, "days");
-                      setFormValue({
-                        ...formValue,
-                        StartDate: newValue,
-                        minend: moment(disableDate),
-                        EndDate: null,
-                      });
-                      setError({
-                        ...formValue,
-                        StartDate: newValue,
-                        minend: moment(disableDate),
-                        EndDate: null,
-                      });
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        sx={{ mt: 1 }}
-                        {...params}
-                        size="small"
-                        fullWidth
-                        error={error?.StartDate ? false : true}
-                      />
-                    )}
+              <DateCalendar
+                lable=" WORK PERMIT START DATE"
+                value={formValue?.StartDate}
+                onChange={(newValue) => {
+                  let dateStart = newValue.$d;
+                  let disableDate = moment(dateStart).add(1, "days");
+                  setFormValue({
+                    ...formValue,
+                    StartDate: newValue,
+                    minend: moment(disableDate),
+                    EndDate: null,
+                  });
+                  setError({
+                    ...formValue,
+                    StartDate: newValue,
+                    minend: moment(disableDate),
+                    EndDate: null,
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    sx={{ mt: 1 }}
+                    {...params}
+                    size="small"
+                    fullWidth
+                    error={error?.StartDate ? false : true}
                   />
-                </LocalizationProvider>
-              </Grid>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}>
+              <DateCalendar
+                lable=" WORK PERMIT END DATE"
+                value={formValue?.EndDate}
+                minDate={new Date(formValue?.minend)}
+                onChange={(newValue) => {
+                  setFormValue({ ...formValue, EndDate: newValue });
+                  setError({ ...formValue, EndDate: newValue });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    sx={{ mt: 1 }}
+                    {...params}
+                    size="small"
+                    fullWidth
+                    error={error?.EndDate ? false : true}
+                  />
+                )}
+              />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <Grid container direction="row" justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  WORK PERMIT END DATE
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    disablePast
-                    value={formValue?.EndDate}
-                    minDate={new Date(formValue?.minend)}
-                    inputFormat="DD-MM-YYYY"
-                    onChange={(newValue) => {
-                      setFormValue({ ...formValue, EndDate: newValue });
-                      setError({ ...formValue, EndDate: newValue });
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        sx={{ mt: 1 }}
-                        {...params}
-                        size="small"
-                        fullWidth
-                        error={error?.EndDate ? false : true}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <Grid container direction="row" justifyContent="flex-start">
-                <Typography
-                  sx={{ fontSize: 12 }}
-                  variant="subtitle-1"
-                  component={"h6"}
-                  color="secondary.contrastText"
-                >
-                  VISA REQUEST NUMBER
-                </Typography>
-                <Typography color="secondary.dark" variant="">
-                  {" "}
-                  *
-                </Typography>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  size="small"
-                  value={formValue?.visaReq}
-                  onChange={(e, val) => ComOnchangeVal(e, val, "visaReq")}
-                  id="combo-box-demo"
+                <Select
+                  label=" VISA REQUEST NUMBER"
+                  IconTitle="Note this is VISA REQUEST Information"
                   options={visaReq}
-                  renderInput={(params) => (
-                    <TextField
-                      sx={{ mt: 1 }}
-                      {...params}
-                      label="Select"
-                      error={error?.visaReq ? false : true}
-                    />
-                  )}
+                  onChange={(e, val) => ComOnchangeVal(e, val, "visaReq")}
+                  value={formValue?.visaReq}
+                  isError={error?.visaReq ? false : true}
                 />
               </Grid>
             </Grid>
           </Grid>
         </Grid>
       </FormControl>
-      <Grid
+      <ButnGrid
         container
         sx={12}
         p={2}
         direction="row"
-        style={{ backgroundColor: "#bcc8ce", position: "fixed", bottom: 0 }}
         justifyContent="flex-end"
         padding={2}
         columnGap={3}
@@ -728,47 +427,13 @@ const LocalInfo = () => {
             Cancel
           </Button>
         </Grid>
-        <Grid
-          item
-          sx={2}
-          // onClick={handleClicksnak({
-          //   vertical: "top",
-          //   horizontal: "right",
-          // })}
-        >
+        <Grid item sx={2}>
           <Button variant="contained" type="submit" onClick={handleSubmit}>
             {" "}
             Submit
           </Button>
         </Grid>
-      </Grid>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "left",
-          horizontal: "right",
-        }}
-      >
-        <Typography sx={{ p: 1 }}>This is LCA Info Pleace note </Typography>
-      </Popover>
-      <Snackbar
-        open={openss}
-        autoHideDuration={6000}
-        onClose={handleClosed}
-        anchorOrigin={{ vertical, horizontal }}
-      >
-        <Alert
-          onClose={handleClosed}
-          variant="filled"
-          severity="info"
-          sx={{ width: "100%" }}
-        >
-          Your Form has Successfuly Submitted
-        </Alert>
-      </Snackbar>
+      </ButnGrid>
     </div>
   );
 };

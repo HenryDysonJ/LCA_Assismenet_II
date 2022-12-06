@@ -12,6 +12,7 @@ export const InputBox = (props) => {
     name,
     error,
     value,
+    helperText
   } = props;
 
   return (
@@ -32,6 +33,7 @@ export const InputBox = (props) => {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        helperText={helperText}
         type={type}
         startAdornment={startAdornment}
         InputProps={InputProps}

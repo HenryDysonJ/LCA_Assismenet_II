@@ -221,32 +221,34 @@ const LcaList = () => {
                     .map((item, index) => (
                       <TableBodyData item={item} index={index} />
                     ))
-                ) : (
-                  <Icon sx={{ position: "absolute", top: "45%", left: "37%" }}>
-                    <Typography
-                      variant="subtitle-1"
-                      component="h1"
-                      color="secondary.contrastText"
-                      justifyItems={"center"}
-                      ml={8}
-                      align="center"
-                    >
-                      <WarningAmberIcon sx={{ fontSize: "6rem" }} />
-                    </Typography>
-                    <Typography
-                      align="center"
-                      sx={{ fontSize: 16, xs: 12 }}
-                      variant="subtitle-1"
-                      component={"h6"}
-                      color="secondary.contrastText"
-                      justifyContent={"center"}
-                      ml={8}
-                    >
-                      {" "}
-                      DATA NOT FOUND{" "}
-                    </Typography>
-                  </Icon>
-                )}
+                ) :""
+                //  (
+                //   <Icon sx={{ position: "absolute", top: "45%", left: "37%" }}>
+                //     <Typography
+                //       variant="subtitle-1"
+                //       component="h1"
+                //       color="secondary.contrastText"
+                //       justifyItems={"center"}
+                //       ml={8}
+                //       align="center"
+                //     >
+                //       <WarningAmberIcon sx={{ fontSize: "6rem" }} />
+                //     </Typography>
+                //     <Typography
+                //       align="center"
+                //       sx={{ fontSize: 16, xs: 12 }}
+                //       variant="subtitle-1"
+                //       component={"h6"}
+                //       color="secondary.contrastText"
+                //       justifyContent={"center"}
+                //       ml={8}
+                //     >
+                //       {" "}
+                //       DATA NOT FOUND{" "}
+                //     </Typography>
+                //   </Icon>
+                // )
+                }
               </TableBody>
             </Table>
           </TableContainer>
@@ -330,6 +332,7 @@ const LcaList = () => {
                         {children}
                       </Typography>
                     );
+
                   })}
                 </List>
               </Grid>
