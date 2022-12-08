@@ -59,7 +59,6 @@ const SignIn = (props) => {
     setSignData({ ...signData, [key]: val, error });
   };
   const validation = () => {
-    console.log("validation");
     let isError = true;
     let error = signData?.error;
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;

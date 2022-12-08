@@ -47,6 +47,7 @@ const LocalInfo = () => {
     StartDate: "",
     EndDate: "",
     visaReq: "",
+    hal:""
   });
 
   let navigate = useNavigate();

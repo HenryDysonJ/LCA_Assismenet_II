@@ -19,30 +19,31 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
-
+import SwitchLeftIcon from '@mui/icons-material/SwitchLeft';
+import SwitchRightIcon from '@mui/icons-material/SwitchRight';
 const headLabe = [
   {
-    id: "LCA NUMBER",
+    id: "AsstReqNo",
     label: "LCA NUMBER",
   },
   {
-    id: "NAME",
+    id: "EName",
     label: "ETA NAME",
   },
   {
-    id: "ROLE",
+    id: "ECode",
     label: "JOB ROLE",
   },
   {
-    id: "CITY",
+    id: "workPerNo",
     label: "CITY",
   },
   {
-    id: "COUNTRY",
+    id: "ENumber",
     label: "COUNTRY",
   },
   {
-    id: "VISATYPE",
+    id: "id",
     label: "VISATYPE",
   },
   {
@@ -68,7 +69,7 @@ const descendingComparator = (a, b, orderBy) => {
   return 0;
 };
 const getComparator = (order, orderBy) => {
-  return order === "desc"
+  return order === "asc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 };
@@ -93,16 +94,16 @@ const EnhancedTableHead = (props) => {
     <TableHead>
       <TableRow>
         {headLabe?.map((headCell) => (
-          <TableCell sortDirection={orderBy === headCell?.id ? order : false}>
+          <TableCell sortDirection={orderBy === headCell?.id ? order : false}  align="center">
             <TableSortLabel
               active={orderBy === headCell?.id}
-              direction={orderBy === headCell?.id ? order : "asc"}
+              direction={orderBy === headCell?.id ? order : "desc"}
               onClick={createSortHandler(headCell?.id)}
             >
               {headCell.label}
-              {orderBy === headCell?.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+              {orderBy === headCell.id ? (
+                <Box component="span" mt={1}>
+                  {order === "asc" ? "." : "."}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -122,15 +123,15 @@ EnhancedTableHead.propTypes = {
 const LcaList = () => {
   let navigate = useNavigate();
   const [datas, setDatas] = useState([]);
-  const [sort, setSort] = useState([]);
   const [myPage, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("Email");
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
+    console.log(event, property,"reqestClick");
+    const isAsc = orderBy === property && order === "desc";
+    setOrder(isAsc ? "asc" : "desc");
     setOrderBy(property);
   };
 
@@ -191,6 +192,7 @@ const LcaList = () => {
     let mapData = JSON.parse(listData);
     setDatas(mapData);
   }, []);
+  console.log(datas,"datas");
   const TableBodyData = ({ item, index }) => {
     return (
       <>
