@@ -12,7 +12,7 @@ export const InputBox = (props) => {
     name,
     error,
     value,
-    helperText
+    helperText,
   } = props;
 
   return (

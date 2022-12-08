@@ -17,13 +17,11 @@ const ResetPassword = () => {
   const onChangeEmail = (e) => {
     setEmail({ ...email, [e.target.name]: e.target.value });
   };
-
   const paperStyles = {
     padding: 50,
     height: "40vh",
     width: 470,
     margin: "100px auto",
-    // color: "#004d40",
   };
 
   const handleClick = () => {

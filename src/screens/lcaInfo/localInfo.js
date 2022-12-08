@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  AppBar,
-  Typography,
-  Toolbar,
-  Grid,
-  Button,
-  FormControl,
-} from "@mui/material";
+import { AppBar, Toolbar, Grid, Button, FormControl } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TextField from "@mui/material/TextField";
@@ -59,7 +52,6 @@ const LocalInfo = () => {
   let navigate = useNavigate();
   let unicId = nextId();
   let editData = useLocation();
-
   useEffect(() => {
     if (editData) {
       setFormValue(editData?.state?.item?.formValue);
@@ -84,7 +76,6 @@ const LocalInfo = () => {
   const validation = () => {
     let isValid = true;
     let error = formValue?.error;
-    // chech clasification
     if (formValue?.Email?.length > 0) {
       isValid = false;
     }
@@ -97,6 +88,7 @@ const LocalInfo = () => {
     let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     let showList = [];
+    let newData = [];
     const show = {
       formValue,
     };
@@ -145,7 +137,6 @@ const LocalInfo = () => {
       }
     }
   };
-  console.log(formValue, "finish");
   return (
     <div>
       <AppBar position="static" color="secondary">
@@ -258,14 +249,12 @@ const LocalInfo = () => {
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               {" "}
-              {/* Email id */}
               <Grid container justifyContent="flex-start">
                 <InputLable
                   lable="OFFICIAL EMAIL ID"
                   value={formValue?.Email}
                   placeholder="Enter the Email"
                   isError={error?.Email ? false : true}
-                  // helperText={"Use abc@gmail.com format"}
                   onChange={(e, val) =>
                     ComOnchangeVal(e, e.target.value, "Email")
                   }

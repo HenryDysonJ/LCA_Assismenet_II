@@ -39,7 +39,6 @@ const SignIn = (props) => {
     },
   });
   let navigate = useNavigate();
-
   const [state, setState] = useState({
     error: false,
     vertical: "top",
@@ -63,6 +62,7 @@ const SignIn = (props) => {
     console.log("validation");
     let isError = true;
     let error = signData?.error;
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
     if (signData?.email.length === 0) {
       isError = false;
@@ -72,12 +72,26 @@ const SignIn = (props) => {
       isError = false;
       error.password = "Invalid password";
     }
+    if (
+      signData?.email &&
+      regexEmail.test(signData?.email) === false &&
+      signData?.password
+    ) {
+      isError = false;
+      error.email = "Invalid email";
+    }
+    if (
+      signData?.email &&
+      regexEmail.test(signData?.email) === true &&
+      signData?.password
+    ) {
+      navigate("/list");
+    }
     setSignData({ ...signData, error });
     return isError;
   };
   const handleSubmit = () => {
     if (validation()) {
-      navigate("/list");
     }
   };
   return (

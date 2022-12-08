@@ -5,15 +5,12 @@ import moment from "moment/moment";
 import { TextField } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-
-
-
 export const DateCalendar = ({
   lable = "",
   value = "",
   minDate = "",
   onChange = () => false,
-  renderInput
+  renderInput,
 }) => {
   return (
     <Grid container direction="row" justifyContent="flex-start">
@@ -25,7 +22,10 @@ export const DateCalendar = ({
       >
         {lable}
       </Typography>
-      <Typography color="secondary.dark" variant="subtitle-1"> *</Typography>
+      <Typography color="secondary.dark" variant="subtitle-1">
+        {" "}
+        *
+      </Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           disablePast
@@ -39,5 +39,3 @@ export const DateCalendar = ({
     </Grid>
   );
 };
-
-

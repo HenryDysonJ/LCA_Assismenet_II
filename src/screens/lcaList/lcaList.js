@@ -16,33 +16,128 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import MailIcon from "@mui/icons-material/Mail";
 import Badge from "@mui/material/Badge";
 import { useNavigate } from "react-router-dom";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import PropTypes from "prop-types";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import { visuallyHidden } from "@mui/utils";
 
-const Icon = styled(Grid)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    left: "12%",
+const headLabe = [
+  {
+    id: "LCA NUMBER",
+    label: "LCA NUMBER",
   },
-  [theme.breakpoints.up('md')]: {
-    left: "37%",
+  {
+    id: "NAME",
+    label: "ETA NAME",
+  },
+  {
+    id: "ROLE",
+    label: "JOB ROLE",
+  },
+  {
+    id: "CITY",
+    label: "CITY",
+  },
+  {
+    id: "COUNTRY",
+    label: "COUNTRY",
+  },
+  {
+    id: "VISATYPE",
+    label: "VISATYPE",
+  },
+  {
+    id: "Email",
+    label: "Email ID",
+  },
+  {
+    id: "EDIT",
+    label: "EDIT",
+  },
+  {
+    id: "DELETE",
+    label: "DELETE",
+  },
+];
+const descendingComparator = (a, b, orderBy) => {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
   }
-}));
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+};
+const getComparator = (order, orderBy) => {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+};
+const stableSort = (array, comparator) => {
+  const removeFormValuesKey = array.map((it) => it.formValue);
+  const stabilizedThis = removeFormValuesKey.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+};
+const EnhancedTableHead = (props) => {
+  const { order, orderBy, onRequestSort } = props;
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+  return (
+    <TableHead>
+      <TableRow>
+        {headLabe?.map((headCell) => (
+          <TableCell sortDirection={orderBy === headCell?.id ? order : false}>
+            <TableSortLabel
+              active={orderBy === headCell?.id}
+              direction={orderBy === headCell?.id ? order : "asc"}
+              onClick={createSortHandler(headCell?.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell?.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+};
+
+EnhancedTableHead.propTypes = {
+  onRequestSort: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+  orderBy: PropTypes.string.isRequired,
+};
+
 const LcaList = () => {
   let navigate = useNavigate();
-  const [datas, setDatas] = useState("");
+  const [datas, setDatas] = useState([]);
+  const [sort, setSort] = useState([]);
   const [myPage, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("Email");
 
-  const handleChangePage = (event, newPage) => {
-    console.log(newPage, "new");
-    setPage(newPage);
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    console.log(+event.target.value, "auto");
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.action.hover,
@@ -54,7 +149,6 @@ const LcaList = () => {
       backgroundColor: theme.palette.action.hover,
     },
   }));
-
   const List = styled("ul")({
     listStyle: "none",
     padding: 0,
@@ -64,28 +158,22 @@ const LcaList = () => {
   });
   const { items } = usePagination({
     count: Math.ceil(datas?.length / rowsPerPage),
-    siblingCount: 0,
+    siblingCount: 10,
     boundaryCount: 0,
   });
   const handleMove = () => {
     navigate("/info");
   };
-
-  useEffect(() => {
-    let listData = localStorage.getItem("showList");
-    let mapData = JSON.parse(listData);
-    setDatas(mapData);
-    console.log(mapData);
-  }, []);
   const handleDelete = (id) => {
+    console.log(id);
     let del = JSON.parse(localStorage.getItem("showList"));
-    let deleteds = del.filter((items) => items.formValue.id != id);
+    let deleteds = del.filter((items) => items?.formValue?.id != id);
     localStorage.setItem("showList", JSON.stringify(deleteds));
     setDatas(deleteds);
   };
   const handleEdit = (item, indexVal) => {
     navigate("/info", {
-      state: { item: item, index: indexVal },
+      state: { item: { formValue: item }, index: indexVal },
     });
   };
   const nextBtn = () => {
@@ -93,35 +181,37 @@ const LcaList = () => {
       setPage((pre) => pre + 1);
     }
   };
-
   const preBtn = () => {
     if (myPage * rowsPerPage > 0) {
       setPage((pre) => pre - 1);
     }
   };
+  useEffect(() => {
+    let listData = localStorage.getItem("showList");
+    let mapData = JSON.parse(listData);
+    setDatas(mapData);
+  }, []);
   const TableBodyData = ({ item, index }) => {
     return (
       <>
-        <StyledTableRow key={item.name}>
-          <StyledTableCell align="right">
-            {item?.formValue?.clasfition?.label}
+        <StyledTableRow>
+          <StyledTableCell align="center">
+            {item?.clasfition?.label}
           </StyledTableCell>
-          <StyledTableCell align="right">
-            {item?.formValue?.EName}
+          <StyledTableCell align="center">{item?.EName}</StyledTableCell>
+          <StyledTableCell align="center">
+            {item?.jobRole?.label}
           </StyledTableCell>
-          <StyledTableCell align="right">
-            {item?.formValue?.jobRole?.label}
+          <StyledTableCell align="center">
+            {item?.workLocation?.label}
           </StyledTableCell>
-          <StyledTableCell align="right">
-            {item?.formValue?.workLocation?.label}
+          <StyledTableCell align="center">
+            {item?.destnation?.label}
           </StyledTableCell>
-          <StyledTableCell align="right">
-            {item?.formValue?.destnation?.label}
+          <StyledTableCell align="center">
+            {item?.visaType?.label}
           </StyledTableCell>
-          <StyledTableCell align="right">
-            {item?.formValue?.visaType?.label}
-          </StyledTableCell>
-          <StyledTableCell align="right">
+          <StyledTableCell align="center">
             <Badge
               badgeContent={2}
               color="primary"
@@ -132,9 +222,9 @@ const LcaList = () => {
             >
               <MailIcon color="action" />
             </Badge>
-            {item?.formValue?.Email}
+            {item?.Email}
           </StyledTableCell>
-          <StyledTableCell align="right">
+          <StyledTableCell align="center">
             <IconButton
               aria-label="delete"
               color="primary"
@@ -144,11 +234,11 @@ const LcaList = () => {
               <ModeRoundedIcon />
             </IconButton>
           </StyledTableCell>
-          <StyledTableCell align="right">
+          <StyledTableCell align="center">
             <IconButton
               color="primary"
               variant="outlined"
-              onClick={() => handleDelete(item?.formValue?.id)}
+              onClick={() => handleDelete(item?.id)}
             >
               <DeleteForeverRoundedIcon />
             </IconButton>
@@ -179,76 +269,27 @@ const LcaList = () => {
         <Grid item container mt={0}>
           <TableContainer
             component={Paper}
-            sx={{ height: 422, overflow: "auto" }}
+            sx={{ height: "70vh", overflow: "auto" }}
           >
             <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="right">
-                    LCA NUMBER&uarr;&darr;
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    ETA NAME&uarr;&darr;
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    JOB ROLE&uarr;&darr;
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    CITY&uarr;&darr;
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    COUNTRY&uarr;&darr;
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    VISATYPE&uarr;&darr;
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    Email&uarr;&darr;
-                  </StyledTableCell>
+              <EnhancedTableHead
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+              />
 
-                  <StyledTableCell align="right">Edit</StyledTableCell>
-                  <StyledTableCell align="right">Delete</StyledTableCell>
-                </TableRow>
-              </TableHead>
               <TableBody sx={{ display: {} }}>
-               { console.log(datas?.length,"ddddddd")}
-                {datas?.length > 0 ? (
-                  datas
-                    .slice(
-                      myPage * rowsPerPage,
-                      myPage * rowsPerPage + rowsPerPage
-                    )
-                    .map((item, index) => (
-                      <TableBodyData item={item} index={index} />
-                    ))
-                ) :""
-                //  (
-                //   <Icon sx={{ position: "absolute", top: "45%", left: "37%" }}>
-                //     <Typography
-                //       variant="subtitle-1"
-                //       component="h1"
-                //       color="secondary.contrastText"
-                //       justifyItems={"center"}
-                //       ml={8}
-                //       align="center"
-                //     >
-                //       <WarningAmberIcon sx={{ fontSize: "6rem" }} />
-                //     </Typography>
-                //     <Typography
-                //       align="center"
-                //       sx={{ fontSize: 16, xs: 12 }}
-                //       variant="subtitle-1"
-                //       component={"h6"}
-                //       color="secondary.contrastText"
-                //       justifyContent={"center"}
-                //       ml={8}
-                //     >
-                //       {" "}
-                //       DATA NOT FOUND{" "}
-                //     </Typography>
-                //   </Icon>
-                // )
-                }
+                {datas?.length > 0
+                  ? stableSort(datas, getComparator(order, orderBy))
+                      .slice(
+                        myPage * rowsPerPage,
+                        myPage * rowsPerPage + rowsPerPage
+                      )
+
+                      .map((item, index) => (
+                        <TableBodyData item={item} index={index} />
+                      ))
+                  : ""}
               </TableBody>
             </Table>
           </TableContainer>
@@ -298,11 +339,11 @@ const LcaList = () => {
                         <Button
                           size="small"
                           variant={
-                            myPage == index - 1 ? "contained" : "outlined"
+                            myPage == page - 1 ? "contained" : "outlined"
                           }
                           type="button"
                           onClick={() => {
-                            setPage(index + 1);
+                            setPage(page - 1);
                           }}
                           style={{
                             fontWeight: selected ? "bold" : undefined,
@@ -332,7 +373,6 @@ const LcaList = () => {
                         {children}
                       </Typography>
                     );
-
                   })}
                 </List>
               </Grid>
