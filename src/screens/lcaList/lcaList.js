@@ -192,7 +192,6 @@ const LcaList = () => {
     let mapData = JSON.parse(listData);
     setDatas(mapData);
   }, []);
-  console.log(datas,"datas");
   const TableBodyData = ({ item, index }) => {
     return (
       <>
